@@ -8,8 +8,8 @@ package EDD;
  *
  * @author PC
  */
-public class Pila {
-    private Nodo tope;
+public class Pila<T> {
+    private Nodo<T> tope;
     private int size;
 
     /** Crea una pila vacía */
@@ -23,20 +23,20 @@ public class Pila {
     }
     
     /** Agrega un elemento en el tope de la pila */
-    public void Apilar(int dato){
+    public void Apilar(T dato){
         Nodo nuevo = new Nodo(dato);
         nuevo.setPnext(this.tope);
         this.tope = nuevo;
         this.size++;
     }
     
-    /** Extrae y retorna el elemento en el tope o -1 en caso 
+    /** Extrae y retorna el elemento en el tope o null en caso 
      * de que pila este vacia*/
-    public int Desapilar(){
+    public T Desapilar(){
         if (this.es_vacio()){
-            return -1;
+            return null;
         }else{
-            int dato = this.tope.getDato();
+            T dato = this.tope.getDato();
             this.tope = this.tope.getPnext();
             this.size--;
             return dato;
@@ -44,10 +44,10 @@ public class Pila {
     }
     
     /** Permite leer el valor del dato que esta en el tope sin sacarlo
-     o -1 en caso de que pila este vacia */
-    public int vertope(){
+     o null en caso de que pila este vacia */
+    public T vertope(){
         if (this.es_vacio()){
-            return -1;
+            return null;
         }
     return this.tope.getDato();
     }
