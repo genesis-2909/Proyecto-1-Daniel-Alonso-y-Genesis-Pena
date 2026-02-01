@@ -8,24 +8,24 @@ package EDD;
  *
  * @author PC
  */
-public class Nodo {
-    private int dato;
-    private Nodo pnext;
+public class Nodo<T> {
+    private T dato;
+    private Nodo<T> pnext;
 
     /** Constructor */
     
-    public Nodo(int dato) {
+    public Nodo (T dato) {
         this.dato = dato;
         this.pnext = null;
     }
 
     /** Getters y setters */  
     
-    public int getDato() {
+    public T getDato() {
         return dato;
     }
 
-    public void setDato(int dato) {
+    public void setDato(T dato) {
         this.dato = dato;
     }
 
