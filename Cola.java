@@ -8,9 +8,9 @@ package EDD;
  *
  * @author PC
  */
-public class Cola {
-    private Nodo frente;
-    private Nodo cola;
+public class Cola<T> {
+    private Nodo<T> frente;
+    private Nodo<T> cola;
     private int size;
 
     /** Crea una cola vacia */
@@ -25,8 +25,8 @@ public class Cola {
     }
     
      /** Inserta un elemento al final de la cola */
-    public void Encolar(int dato){
-        Nodo nuevo = new Nodo(dato);
+    public void Encolar(T dato){
+        Nodo nuevo = new Nodo<>(dato);
         if (this.es_vacio()){
             this.frente = nuevo;
             this.cola = nuevo;       
@@ -38,12 +38,12 @@ public class Cola {
     }
     
     /** Extrae y retorna un elemento al frente de la cola
-     o -1 en caso de que cola este vacia*/
-    public int Desencolar(){
+     o null en caso de que cola este vacia*/
+    public T Desencolar(){
         if (this.es_vacio()){
-            return -1;
+            return null;
         }else{
-            int dato = this.frente.getDato();
+            T dato = this.frente.getDato();
             frente = this.frente.getPnext();
             if (frente == null){
             this.cola = null;
