@@ -1,3 +1,4 @@
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -96,6 +97,20 @@ public class Lista<T> {
         return aux.getDato();
         }
     
+    /**
+    * Reemplaza el dato en una posición específica.
+    * Necesario para actualizar distancias en Dijkstra.
+    * retorna el nuevo valor que se le asignara al dato
+    */
+public void setValor(int index, T nuevoDato) {
+    if (index >= 0 && index < size) {
+        Nodo<T> aux = pfirst;
+        for (int i = 0; i < index; i++) {
+            aux = aux.getPnext();
+        }
+        aux.setDato(nuevoDato);
+    }
+}
 }
     
 
