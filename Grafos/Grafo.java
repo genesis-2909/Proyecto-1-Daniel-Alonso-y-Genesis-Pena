@@ -60,38 +60,53 @@ public class Grafo {
         return null;
     }
 
-    /**
-     * Elimina una proteina del grafo y limpia todas las referencias hacia ella
-     * en las listas de adyacencia de otros vertices.
-     */
-    public void eliminarProteina(String nombre) {
-        if (primero == null) return;
+   /**
+    * Elimina una proteína y todas sus interacciones en el grafo
+    */
+public void eliminarProteina(String nombre) {
+    if (primero == null) return;
 
-        /** Quitar el vertice de la lista principal de proteínas */
-        if (primero.getNombre().equalsIgnoreCase(nombre)) {
-            primero = primero.getSiguiente();
-            cantidadVertices--;
-        } else {
-            Vertice ant = primero;
-            Vertice act = primero.getSiguiente();
-            while (act != null) {
-                if (act.getNombre().equalsIgnoreCase(nombre)) {
-                    ant.setSiguiente(act.getSiguiente());
-                    cantidadVertices--;
-                    break;
-                }
-                ant = act;
-                act = act.getSiguiente();
+    /** Quitar el vértice de la lista principal */
+    if (primero.getNombre().equals(nombre)) {
+        primero = primero.getSiguiente();
+        cantidadVertices--;
+    } else {
+        Vertice ant = primero;
+        Vertice act = primero.getSiguiente();
+        while (act != null) {
+            if (act.getNombre().equals(nombre)) {
+                ant.setSiguiente(act.getSiguiente());
+                cantidadVertices--;
+                break;
             }
-        }
-
-        /** Recorre todos los demás vertices para eliminar aristas que apunten a la eliminada */
-        Vertice auxV = primero;
-        while (auxV != null) {
-            eliminarAristaDeLista(auxV, nombre);
-            auxV = auxV.getSiguiente();
+            ant = act;
+            act = act.getSiguiente();
         }
     }
+
+    // 2. Limpiar las listas de adyacencia de TODOS los demás vértices
+    Vertice auxV = primero;
+    while (auxV != null) {
+        Arista ady = auxV.getListaAdyacencia();
+        if (ady != null) {
+            if (ady.getNombreproteina().equals(nombre)) {
+                auxV.setListaAdyacencia(ady.getSig());
+            } else {
+                Arista antA = ady;
+                Arista actA = ady.getSig();
+                while (actA != null) {
+                    if (actA.getNombreproteina().equals(nombre)) {
+                        antA.setSig(actA.getSig());
+                        break;
+                    }
+                    antA = actA;
+                    actA = actA.getSig();
+                }
+            }
+        }
+        auxV = auxV.getSiguiente();
+    }
+}
 
     /**
      * Elimina una arista específica de la lista de adyacencia de un vertice dado.
@@ -144,7 +159,7 @@ public class Grafo {
         }
         return visitados;
     }
-
+    
     public int getCantidadVertices(){ 
         return cantidadVertices; 
     }
