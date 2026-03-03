@@ -11,16 +11,22 @@ public class Vertice {
     private String nombre; /** Nombre de la proteina */
     private Arista listaAdyacencia; /** Esta es la lista de adyacencia de esta proteína */
     private Vertice siguiente;      /** Puntero para la lista global de proteínas */
+    private boolean visitado;
 
     public Vertice(String nombre) {
         this.nombre = nombre;
         this.listaAdyacencia = null;
         this.siguiente = null;
+        this.visitado = false;
     }
 
     /**
      * Getters y setters
      */
+    
+    public boolean isVisitado() { return visitado; }
+    public void setVisitado(boolean visitado) { this.visitado = visitado; }
+    
     public String getNombre() {
         return nombre;
     }
