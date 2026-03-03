@@ -7,6 +7,11 @@ import EDD.Cola;
 import EDD.Pila;
 import EDD.Lista;
 import javax.swing.JOptionPane;
+import org.graphstream.graph.*;
+import org.graphstream.graph.implementations.*;
+import org.graphstream.ui.view.Viewer;
+import org.graphstream.ui.swing_viewer.SwingViewer;
+
 /**
  * Clase grafo que va a implementar un grafo no dirigido mediante una lista
  * de adyacencia para visualizar la interacción de las proteinas
@@ -180,9 +185,107 @@ public void eliminarProteina(String nombre) {
         vincular(pA, pB, peso);
         vincular(pB, pA, peso);
     }
+    /**
+ * Recorre el grafo completo y genera una cadena de texto con el formato
+ * de origen, destino y peso, lista para ser guardada en el archivo TXT.
+ * * @return String con todas las interacciones del grafo.
+ */
+public String obtenerContenidoGrafoParaArchivo() {
+    StringBuilder sb = new StringBuilder();
+    Vertice vAux = primero;
+
+    while (vAux != null) {
+        Arista aAux = vAux.getListaAdyacencia();
+        
+        while (aAux != null) {
+            if (vAux.getNombre().compareToIgnoreCase(aAux.getNombreproteina()) < 0) {
+                sb.append(vAux.getNombre()).append(",")
+                  .append(aAux.getNombreproteina()).append(",")
+                  .append((int)aAux.getPeso()).append("\n");
+            }
+            aAux = aAux.getSig();
+        }
+        vAux = vAux.getSiguiente();
+    }
+    return sb.toString();
+    }
+/**
+ * Crea una ventana externa interactiva para visualizar la red de proteinas.
+ * Identifica los complejos proteicos mediante el layout automatico.
+ */
+public void mostrarGrafoAnimado() {
+    /**Configuramos la libreria para que use la interfaz Swing de Java*/
+    System.setProperty("org.graphstream.ui", "swing");
+    Graph grafoviz = new SingleGraph("Red de Interacciones Proteicas");
+
+    String estilo = "node { fill-color: #00FFFF; size: 25px; text-size: 14; text-alignment: at-right; } "
+                  + "edge { fill-color: grey; size: 2px; }";
+    grafoviz.setAttribute("ui.stylesheet", estilo);
+
+    /** Agregar todos los vértices (proteínas)*/
+    Vertice vAux = primero; 
+    while (vAux != null) {
+        Node n = grafoviz.addNode(vAux.getNombre());
+        n.setAttribute("ui.label", vAux.getNombre());
+        vAux = vAux.getSiguiente();
+    }
+
+    /** Agregamos todas las aristas (interacciones)*/
+    vAux = primero;
+    while (vAux != null) {
+        Arista aAux = vAux.getListaAdyacencia();
+        while (aAux != null) {
+            try {
+                String idArista = vAux.getNombre() + "-" + aAux.getNombreproteina();
+                Edge e = grafoviz.addEdge(idArista, vAux.getNombre(), aAux.getNombreproteina());
+                e.setAttribute("ui.label", (int)aAux.getPeso()); // Mostramos el peso
+            } catch (EdgeRejectedException | IdAlreadyInUseException e) {
+            }
+            aAux = aAux.getSig();
+        }
+        vAux = vAux.getSiguiente();
+    }
+
+    /** Abrir la ventana con autolayout y habilitar interacción*/
+    Viewer viewer = grafoviz.display(true);
+    viewer.getDefaultView().enableMouseOptions();
+   
+    }
+public String encontrarComplejos() {
+    Vertice v = primero;
+    while (v != null) {
+        v.setVisitado(false);
+        v = v.getSiguiente();
+    }
+
+    String reporte = "COMPLEJOS DETECTADOS:\n";
+    int numComplejo = 1;
+    v = primero;
+
+    while (v != null) {
+        if (!v.isVisitado()) {
+            reporte += "Complejo #" + numComplejo + ": ";
+            reporte = recorrerYAgrupar(v, reporte);
+            reporte += "\n";
+            numComplejo++;
+        }
+        v = v.getSiguiente();
+    }
+    return reporte;
 }
 
+private String recorrerYAgrupar(Vertice v, String res) {
+    v.setVisitado(true);
+    res += "[" + v.getNombre() + "] ";
     
-
-
-
+    Arista a = v.getListaAdyacencia();
+    while (a != null) {
+        Vertice vecino = buscarVertice(a.getNombreproteina());
+        if (vecino != null && !vecino.isVisitado()) {
+            res = recorrerYAgrupar(vecino, res);
+        }
+        a = a.getSig();
+    }
+    return res;
+}
+}
